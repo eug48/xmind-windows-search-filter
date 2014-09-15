@@ -304,7 +304,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FilterHandler.rgs" />

@@ -77,7 +77,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XMind-Windows-Search-Filter.rgs">
