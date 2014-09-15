@@ -11,15 +11,15 @@ Building/Compiling
 ------------------
 
  - Currently this project has been compiled with Visual Studio 2013 Ultimate.
- - It should be possible to use the free Express for Windows Desktop edition along with the ATL library from the WDK but this hasn't been tested yet.
+ - It should be possible to use the free Express for Windows Desktop edition along with the ATL library from the [WDK] but this hasn't been tested yet.
  - Pre-compiled DLLs are available in the GitHub release.
 
+[WDK]:http://www.microsoft.com/en-au/download/details.aspx?id=11800
 
 Installing
 -------------
 
-Use regsvr32 to register the DLL. This will update the Windows registry.
-
+Use regsvr32 to register the DLL. This will update the Windows registry. You may need to rebuild the Windows Search index via Indexing Options.
 
 Register the DLL that is appropriate for your system (x86 for 32-bit, x64 for 64-bit).
 ```
@@ -47,10 +47,22 @@ c:\windows\SysWOW64\rundll32.exe "d:\test\xmind-search-filter-dbg-x86.dll",xmind
 
 [DebugView]:http://technet.microsoft.com/en-us/sysinternals/bb896647.aspx
 
-
 Limitations
 -------------------
 
  - This search filter is currently using an XSL file from XMorgDown https://github.com/sky-y/xmorgdown/blob/master/content.xsl
 It seems to support only 6 levels of topics and doesn't seem to handle multi-line notes well.
+ - Attachments are not indexed.
+ - Does the Windows Search index really have to be rebuilt to index existing xmind files?
  - No doubt other things I'm not aware of yet as this hasn't been extensively tested.
+
+
+
+Thanks to
+--------------------
+
+ - sky-y for [XMorgDown]
+ - Microsoft
+ - XMind
+ 
+[XMorgDown]: https://github.com/sky-y/xmorgdown
