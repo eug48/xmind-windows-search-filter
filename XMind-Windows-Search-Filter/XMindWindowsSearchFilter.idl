@@ -1,0 +1,35 @@
+// XMindWindowsSearchFilter.idl : IDL source for XMind-Windows-Search-Filter
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (XMindWindowsSearchFilter.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(33C38DAA-C721-4D2D-A0E0-DEE369069642),
+	pointer_default(unique)
+]
+interface ISearch : IUnknown
+{
+};
+
+[
+	uuid(E9C2127D-23FF-4855-93ED-57C4D9292F5E),
+	version(1.0),
+]
+library XMindWindowsSearchFilterLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(8FC84D2E-DE3F-4A15-88D9-99360975A58D)
+	]
+	coclass Search
+	{
+		[default] interface IFilter;
+	};
+};
+
+import "filter.idl";

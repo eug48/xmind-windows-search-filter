@@ -1,0 +1,28 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {8FC84D2E-DE3F-4A15-88D9-99360975A58D} = s 'XMind Search Filter'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			TypeLib = s '{E9C2127D-23FF-4855-93ED-57C4D9292F5E}'
+			Version = s '1.0'
+		}
+
+		ForceRemove {6C44B332-7746-4633-A5AC-D74ACD0EE031} = s 'XMind Search Filter'
+		{
+			ForceRemove PersistentAddinsRegistered = s ''
+			{
+				{89BCB740-6119-101A-BCB7-00DD010655AF} = s '{8FC84D2E-DE3F-4A15-88D9-99360975A58D}'
+			}
+		}
+	}
+
+	NoRemove .xmind
+	{
+		NoRemove PersistentHandler = s '{6C44B332-7746-4633-A5AC-D74ACD0EE031}'
+	}
+}
