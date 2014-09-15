@@ -91,6 +91,58 @@ STDAPI DllInstall(BOOL bInstall, _In_opt_  LPCWSTR pszCmdLine)
 	return hr;
 }
 
+/* 
+Entry point for rundll32
+Use by running e.g. c:\windows\System32\rundll32.exe d:\xmind-windows-search-filter\bin\xmind-search-filter-dbg-x64,xmind2html d:\test.xmind
+http://support.microsoft.com/kb/164787
+*/
+void CALLBACK xmind2htmlW(HWND hwnd, HINSTANCE hinst, LPWSTR lpszCmdLine, int nCmdShow)
+{
+	::CoInitialize(NULL);
+
+	HRESULT hr;
+	CComObject<CFilterHandler>* handler = new CComObject<CFilterHandler>();
+	hr = handler->FinalConstruct();
+	hr = handler->Load(lpszCmdLine, 0);
+
+	CComBSTR filename;
+	filename.Append(lpszCmdLine);
+	filename.Append(L".html");
+
+	hr = handler->SaveHtmlToFile(filename);
+
+	delete handler;
+}
+
+/* Tracing code
+from
+http://stackoverflow.com/a/20931125
+
+*/
+
+void CustomTrace(const wchar_t* format, ...)
+{
+	const int TraceBufferSize = 1024;
+	wchar_t buffer[TraceBufferSize];
+
+	va_list argptr; va_start(argptr, format);
+	vswprintf_s(buffer, format, argptr);
+	va_end(argptr);
+
+	::OutputDebugString(buffer);
+}
+
+void CustomTrace(const char* format, ...)
+{
+	const int TraceBufferSize = 1024;
+	char buffer[TraceBufferSize];
+
+	va_list argptr; va_start(argptr, format);
+	vsprintf_s(buffer, format, argptr);
+	va_end(argptr);
+
+	::OutputDebugStringA(buffer);
+}
 
 
 XMindContentsXSLT CFilterHandler::xmindXSLT;

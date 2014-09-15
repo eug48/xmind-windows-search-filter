@@ -8,6 +8,8 @@
 #include <atlhandlerimpl.h>
 
 #include "XMindWindowsSearchFilter_i.h"
+
+#include "CustomTrace.h"
 #include "unzip.h"
 #include "XMindUtils.h"
 
@@ -65,6 +67,45 @@ END_COM_MAP()
 
 public:
 
+	SCODE STDMETHODCALLTYPE SaveHtmlToFile(LPCWSTR filename)
+	{
+		HRESULT hr;
+			
+		// convert content.xml into HTML
+		CComBSTR html;
+		hr = xmindXSLT.ToHTML(m_contents_buffer, m_contents_buffer_len, &html);
+		if (FAILED(hr)) return hr;
+
+		// add a BOM
+		CComBSTR htmlWithBOM(L"\uFEFF");
+		hr = htmlWithBOM.AppendBSTR(html);
+		if (FAILED(hr))
+		{
+			ATLTRACE2("[xmindfilter] [SaveHtmlToFile] AppendBSTR failed: %d", hr);
+			return hr;
+		}
+		
+		// write to file
+
+
+		HANDLE hfile = ::CreateFile(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hfile == INVALID_HANDLE_VALUE)
+		{
+			ATLTRACE2("[xmindfilter] [SaveHtmlToFile] CreateFile failed: %d", ::GetLastError());
+			return E_FAIL;
+		}
+
+		DWORD written;
+		BOOL ret = ::WriteFile(hfile, (BYTE*)(LPWSTR)htmlWithBOM, htmlWithBOM.ByteLength(), &written, NULL);
+		if (!ret)
+		{
+			ATLTRACE2("[xmindfilter] [SaveHtmlToFile] WriteFile failed: %d", ::GetLastError());
+			return E_FAIL;
+		}
+
+		::CloseHandle(hfile);
+		return S_OK;
+	}
 
 	virtual  SCODE STDMETHODCALLTYPE  Init(ULONG grfFlags, ULONG cAttributes, FULLPROPSPEC const * aAttributes, ULONG * pFlags)
 	{
@@ -80,7 +121,7 @@ public:
 		hr = htmlWithBOM.AppendBSTR(html);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] AppendBSTR failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Init] AppendBSTR failed: %d", hr);
 			return hr;
 		}
 		// load Microsoft's nlhtml filter
@@ -88,7 +129,7 @@ public:
 		hr = CLSIDFromString(L"{e0ca5340-4534-11cf-b952-00aa0051fe20}", &nlhtml_guid);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] CLSIDFromString failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Init] CLSIDFromString failed: %d", hr);
 			return hr;
 		}
 
@@ -96,7 +137,7 @@ public:
 		hr = htmlFltStream.CoCreateInstance(nlhtml_guid);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] CoCreateInstance nlhtml.dll failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Init] CoCreateInstance nlhtml.dll failed: %d", hr);
 			return hr;
 		}
 
@@ -104,7 +145,7 @@ public:
 		CComPtr<IStream> bstrStream(::SHCreateMemStream((BYTE*)(LPWSTR)htmlWithBOM, htmlWithBOM.ByteLength()));
 		if (bstrStream == NULL)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] SHCreateMemStream failed");
+			ATLTRACE2("[xmindfilter] [Init] SHCreateMemStream failed");
 			hr = E_FAIL;
 			return hr;
 		}
@@ -113,7 +154,7 @@ public:
 		hr = htmlFltStream->Load(bstrStream);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] htmlFltStream->Load failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Init] htmlFltStream->Load failed: %d", hr);
 			return hr;
 		}
 
@@ -122,14 +163,14 @@ public:
 		hr = htmlFltStream->QueryInterface(IID_PPV_ARGS(&htmlIFilter));
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] htmlFltStream failed to give IFilter: %d", hr);
+			ATLTRACE2("[xmindfilter] [Init] htmlFltStream failed to give IFilter: %d", hr);
 			return hr;
 		}
 
 		hr = htmlIFilter->Init(grfFlags, cAttributes, aAttributes, pFlags);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Init] htmlFltStream Init failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Init] htmlFltStream Init failed: %d", hr);
 			return hr;
 		}
 
@@ -141,7 +182,7 @@ public:
 	{
 		if (htmlIFilter == NULL)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [GetChunk] htmlIFilter == NULL");
+			ATLTRACE2("[xmindfilter] [GetChunk] htmlIFilter == NULL");
 			return E_INVALIDARG;
 		}
 
@@ -153,7 +194,7 @@ public:
 	{
 		if (htmlIFilter == NULL)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [GetText] htmlIFilter == NULL");
+			ATLTRACE2("[xmindfilter] [GetText] htmlIFilter == NULL");
 			return E_INVALIDARG;
 		}
 
@@ -165,7 +206,7 @@ public:
 	{
 		if (htmlIFilter == NULL)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [GetValue] htmlIFilter == NULL");
+			ATLTRACE2("[xmindfilter] [GetValue] htmlIFilter == NULL");
 			return E_INVALIDARG;
 		}
 
@@ -188,7 +229,7 @@ public:
 		HRESULT hr = SHCreateStreamOnFile(pszFileName, STGM_READ, &stream);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] SHCreateStreamOnFile failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Load] SHCreateStreamOnFile failed: %d", hr);
 			return hr;
 		}
 
@@ -206,12 +247,12 @@ public:
 		hr = pStm->Stat(&stat, STATFLAG_NONAME);
 		if (FAILED(hr))
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] Stat failed: %d", hr);
+			ATLTRACE2("[xmindfilter] [Load] Stat failed: %d", hr);
 			goto cleanup;
 		}
 		if (stat.cbSize.HighPart > 0)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] Error: HighPart > 0");
+			ATLTRACE2("[xmindfilter] [Load] Error: HighPart > 0");
 			hr = E_FAIL;
 			goto cleanup;
 		}
@@ -222,7 +263,7 @@ public:
 		m_zip_buffer = (BYTE*) malloc(stat.cbSize.LowPart);
 		if (m_zip_buffer == NULL)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] malloc(m_zip_buffer, %d) failed", stat.cbSize.LowPart);
+			ATLTRACE2("[xmindfilter] [Load] malloc(m_zip_buffer, %d) failed", stat.cbSize.LowPart);
 			hr = E_OUTOFMEMORY;
 			goto cleanup;
 		}
@@ -236,7 +277,7 @@ public:
 			hr = pStm->Read(zip_buffer_p, toRead, &read);
 			if (FAILED(hr))
 			{
-				ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] Error: Read failed: %d", hr);
+				ATLTRACE2("[xmindfilter] [Load] Error: Read failed: %d", hr);
 				goto cleanup;
 			}
 
@@ -251,7 +292,7 @@ public:
 		}
 		m_zip = OpenZip(m_zip_buffer, stat.cbSize.LowPart, NULL);
 		if (m_zip == NULL) {
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] Error: OpenZip failed: %d", ::GetLastError());
+			ATLTRACE2("[xmindfilter] [Load] Error: OpenZip failed: %d", ::GetLastError());
 			hr = E_FAIL;
 			goto cleanup;
 		}
@@ -262,7 +303,7 @@ public:
 		int i;
 		zr = FindZipItem(m_zip, L"content.xml", true, &i, &ze);
 		if (zr != ZR_OK) {
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] Error: FindZipItem(content.xml) failed: %d", zr);
+			ATLTRACE2("[xmindfilter] [Load] Error: FindZipItem(content.xml) failed: %d", zr);
 			hr = E_FAIL;
 			goto cleanup;
 		}
@@ -275,14 +316,14 @@ public:
 		m_contents_buffer = (BYTE*)malloc(ze.unc_size);
 		if (m_zip_buffer == NULL)
 		{
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] malloc(m_contents_buffer, %d) failed", ze.unc_size);
+			ATLTRACE2("[xmindfilter] [Load] malloc(m_contents_buffer, %d) failed", ze.unc_size);
 			hr = E_OUTOFMEMORY;
 			goto cleanup;
 		}
 
 		zr = UnzipItem(m_zip, i, m_contents_buffer, ze.unc_size);
 		if (zr != ZR_OK) {
-			ATLTRACE2(atlTraceGeneral, 1, "[xmindfilter] [Load] Error: UnzipItem(content.xml) failed: %d", zr);
+			ATLTRACE2("[xmindfilter] [Load] Error: UnzipItem(content.xml) failed: %d", zr);
 			hr = E_FAIL;
 			goto cleanup;
 		}

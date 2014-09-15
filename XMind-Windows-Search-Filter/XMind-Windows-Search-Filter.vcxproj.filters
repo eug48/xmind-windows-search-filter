@@ -66,6 +66,9 @@
     <ClInclude Include="XMindUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CustomTrace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="XMind-Windows-Search-Filter.rc">
@@ -74,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="XMind-Windows-Search-Filter.rgs">

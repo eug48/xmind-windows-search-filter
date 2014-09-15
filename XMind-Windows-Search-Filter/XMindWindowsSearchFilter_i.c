@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Mon Sep 15 07:01:24 2014
+/* at Mon Sep 15 08:33:26 2014
  */
 /* Compiler settings for XMindWindowsSearchFilter.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
