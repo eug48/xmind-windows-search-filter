@@ -11,7 +11,8 @@ Building/Compiling
 ------------------
 
  - Currently this project has been compiled with Visual Studio 2013 Ultimate.
- - It should be possible to use the free edition along with the ATL library from the WDK but this hasn't been tested yet.
+ - It should be possible to use the free Express for Windows Desktop edition along with the ATL library from the WDK but this hasn't been tested yet.
+ - Pre-compiled DLLs are available in the GitHub release.
 
 
 Installing
