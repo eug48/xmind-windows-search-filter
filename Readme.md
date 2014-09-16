@@ -53,6 +53,7 @@ Limitations
  - This search filter is currently using an XSL file from XMorgDown https://github.com/sky-y/xmorgdown/blob/master/content.xsl
 It seems to support only 6 levels of topics and doesn't seem to handle multi-line notes well.
  - Attachments are not indexed.
+ - Highlighted previews don't appear for an unknown reason.
  - Does the Windows Search index really have to be rebuilt to index existing xmind files?
  - No doubt other things I'm not aware of yet as this hasn't been extensively tested.
 
@@ -62,7 +63,9 @@ Thanks to
 --------------------
 
  - sky-y for [XMorgDown]
+ - [unzip.cpp] by Jean-Loup Gailly, Mark Adler, the info-zip team, ljw1004 and others 
  - Microsoft
  - XMind
  
 [XMorgDown]: https://github.com/sky-y/xmorgdown
+[unzip.cpp]: http://www.codeproject.com/Articles/7530/Zip-Utils-clean-elegant-simple-C-Win
