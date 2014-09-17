@@ -9,11 +9,11 @@ This DLL works by using an XSL transform to convert the mindmap's content.xml in
 Installing
 -------------
 
-Pre-compiled DLLs are available in the GitHub releases.
+Pre-compiled DLLs are available in GitHub releases.
 
 Use regsvr32 to register the DLL. This will update the Windows registry. You may need to rebuild the Windows Search index via Indexing Options.
 
-Register the DLL that is appropriate for your system (x86 for 32-bit, x64 for 64-bit).
+Register the DLL that is appropriate for your system (x86 for 32-bit, x64 for 64-bit):
 ```
 regsvr32 "d:\test\xmind-search-filter-x64.dll"
 ```
