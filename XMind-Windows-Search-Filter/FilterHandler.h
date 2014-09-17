@@ -4,8 +4,6 @@
 #include "resource.h"       // main symbols
 
 #define AFX_PREVIEW_STANDALONE
-#include <atlhandler.h>
-#include <atlhandlerimpl.h>
 
 #include "XMindWindowsSearchFilter_i.h"
 
@@ -224,6 +222,8 @@ public:
 
 	virtual  SCODE STDMETHODCALLTYPE  Load(LPCWSTR pszFileName, DWORD dwMode)
 	{
+		ATLTRACE2(L"[xmindfilter] Going to load %s", pszFileName);
+
 		IStream *stream;
 		USES_CONVERSION;
 		HRESULT hr = SHCreateStreamOnFile(pszFileName, STGM_READ, &stream);
@@ -244,7 +244,13 @@ public:
 		HRESULT hr;
 		
 		// allocate buffer for the zip
-		hr = pStm->Stat(&stat, STATFLAG_NONAME);
+#ifdef _DEBUG
+		DWORD statFlag = 0;
+#else
+		DWORD statFlag = STATFLAG_NONAME;
+#endif
+
+		hr = pStm->Stat(&stat, statFlag);
 		if (FAILED(hr))
 		{
 			ATLTRACE2("[xmindfilter] [Load] Stat failed: %d", hr);
@@ -252,11 +258,20 @@ public:
 		}
 		if (stat.cbSize.HighPart > 0)
 		{
-			ATLTRACE2("[xmindfilter] [Load] Error: HighPart > 0");
+			ATLTRACE2("[xmindfilter] [Load] Error: file too large - stat.cbSize.HighPart > 0"); // FIXME?
 			hr = E_FAIL;
 			goto cleanup;
 		}
-		
+
+		if (stat.pwcsName != NULL)
+		{
+			ATLTRACE2(L"[xmindfilter] Going to load %s (%d bytes)", stat.pwcsName, stat.cbSize.LowPart);
+		}
+		else
+		{
+			ATLTRACE2(L"[xmindfilter] Going to load a %d byte stream", stat.cbSize.LowPart);
+		}
+
 		if (m_zip_buffer != NULL)
 			free(m_zip_buffer);
 		m_zip_buffer = NULL;

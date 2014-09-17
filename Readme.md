@@ -45,7 +45,10 @@ Currently this project has been compiled with Visual Studio 2013 Ultimate. You c
 Testing
 -------------
 
-Debug versions (with dbg in the filename) will write error information via OutputDebugString. To see this output use a tool like [DebugView].
+Debug versions (with dbg in the filename) will write error information via OutputDebugString. To see this output use a tool like [DebugView]. If the filter is working you should see messages like
+```
+[xmindfilter] Going to load C:\Users\test\Documents\mindmaps\test.xmind (221472 bytes)
+```
 
 There is also a mechanism to manually transform a mindmap into HTML:
 
@@ -53,6 +56,7 @@ There is also a mechanism to manually transform a mindmap into HTML:
 c:\windows\SysWOW64\rundll32.exe "d:\test\xmind-search-filter-dbg-x86.dll",xmind2html c:\users\user\documents\mind maps\test.xmind
 ```
 *Note:* Don't put quotes around the filename when using rundll32
+
 
 
 [DebugView]:http://technet.microsoft.com/en-us/sysinternals/bb896647.aspx
