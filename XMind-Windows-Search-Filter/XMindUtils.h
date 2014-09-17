@@ -1,7 +1,6 @@
 #pragma once
 
 #define AFX_PREVIEW_STANDALONE
-#include <atlhandler.h>
 #include <atltrace.h>
 #include <atlcomcli.h>
 #include <msxml6.h>
